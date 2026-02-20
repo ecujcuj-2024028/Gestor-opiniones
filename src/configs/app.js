@@ -9,11 +9,15 @@ import morgan from "morgan";
 // Configuraciones
 import { dbConnection } from "./db-postgresql.js";
 import { mongoConnection } from "./db-mongodb.js";
-
+import { seedRoles } from '../helpers/role-seed.js';
 import { corsOptions } from "./cors-configuration.js";
 import { helmetConfiguration } from "./helmet-configuration.js";
 
-const BASE_PATH = '/OpinionManagert/v1';
+// Servicios
+import auth from "../Services/auth/auth.routes.js";
+import user from "../Services/user/user.routes.js";
+
+const BASE_PATH = '/OpinionManagement/v1';
 
 /* =========================
     Middlewares Globales
@@ -30,13 +34,17 @@ const middlewares = (app) => {
    Definición de Rutas
    ========================= */
 const routes = (app) => {
+    // Rutas de Servicios
+    app.use(`${BASE_PATH}/auth`, auth);
+
+    app.use(`${BASE_PATH}/user`, user);
 
     // Health Check
     app.get(`${BASE_PATH}/health`, (req, res) => {
         return res.status(200).json({
             status: 'Healthy',
             timestamp: new Date().toISOString(),
-            service: 'OpinionManager Server',
+            service: 'OpinionManagement Server',
             databases: { postgresql: 'Connected', mongodb: 'Connected' }
         });
     });
@@ -55,7 +63,7 @@ export const initServer = async () => {
     const PORT = process.env.PORT || 3006;
 
     try {
-        console.log('--- STARTING OpinionManager Server INFRASTRUCTURE ---');
+        console.log('--- STARTING OpinionManagement Server INFRASTRUCTURE ---');
 
         // Conexiones a DB
         try {
@@ -66,6 +74,13 @@ export const initServer = async () => {
         } catch (error) {
             console.error('CRITICAL ERROR:', error.message);
             process.exit(1);
+        }
+
+        await dbConnection();
+        await mongoConnection();
+
+        if (process.env.NODE_ENV === 'development') {
+            await seedRoles();
         }
 
         middlewares(app);
