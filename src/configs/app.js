@@ -16,6 +16,7 @@ import { helmetConfiguration } from "./helmet-configuration.js";
 // Servicios
 import auth from "../Services/auth/auth.routes.js";
 import user from "../Services/user/user.routes.js";
+import publicationRoutes from '../Services/publications/publication.routes.js';
 
 const BASE_PATH = '/OpinionManagement/v1';
 
@@ -38,6 +39,8 @@ const routes = (app) => {
     app.use(`${BASE_PATH}/auth`, auth);
 
     app.use(`${BASE_PATH}/user`, user);
+
+    app.use(`${BASE_PATH}/publications`, publicationRoutes);
 
     // Health Check
     app.get(`${BASE_PATH}/health`, (req, res) => {
@@ -91,6 +94,17 @@ export const initServer = async () => {
             console.log('---------------------------------------------');
             console.log(`Server running on port: ${PORT}`);
             console.log(`Health: http://localhost:${PORT}${BASE_PATH}/health`);
+            console.log('AUTH:          POST /auth/register');
+            console.log('               POST /auth/login');
+            console.log('               POST /auth/verify-email');
+            console.log('PERFIL:        PUT  /user/update-profile');
+            console.log('               PUT  /user/update-password');
+            console.log('PUBLICACIONES: GET  /publications');
+            console.log('               GET  /publications/my');
+            console.log('               GET  /publications/:id');
+            console.log('               POST /publications');
+            console.log('               PUT  /publications/:id');
+            console.log('               DEL  /publications/:id');
             console.log('---------------------------------------------');
         });
 
