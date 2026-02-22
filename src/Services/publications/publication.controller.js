@@ -1,4 +1,5 @@
 import { Publication } from './publication.model.js';
+import { Comment } from '../comments/comment.model.js';
 
 export const createPublication = async (req, res) => {
   try {
@@ -118,7 +119,8 @@ export const deletePublication = async (req, res) => {
       });
     }
 
-    await Publication.findByIdAndDelete(req.params.id);
+    await Comment.deleteMany({ publicationId: publication._id });
+    await publication.deleteOne();
 
     return res.status(200).json({
       success: true,
