@@ -20,6 +20,4 @@ router.put(
 
 router.put('/update-password', validateJWT, updatePassword);
 
-// Nota: No se incluye ruta DELETE para cumplir con la integridad 
-
 export default router;
